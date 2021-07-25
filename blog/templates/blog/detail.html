@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>{{topic.topic_title}}</h1>
+    <p>{{topic.topic_body}}</p>
+    <hr>
+    <h2>Add a comment:</h2>
+    <form action="{% url 'blog:comment' topic.id %}" method="post">
+        {% csrf_token %}
+        <label>Username:
+          <input type="text" name="user" maxlength="200" size="80">
+        </label>
+        <br>
+        <label>Comment:
+          <textarea name="body" rows="5" cols="82" ></textarea>
+        </label>
+        <br>
+        <input type="submit" value="Submit comment  ">
+    </form>
+    <hr>
+    {% if topic.comment_set.all %}
+      <h2> Comments: </h2>
+      {% for comment in topic.comment_set.all %}
+        <p>Submited by {{comment.comment_user}} on {{comment.comment_date}}</p>
+        <p>{{comment.comment_body}}</p>
+      {% endfor%}
+    {% endif %}
+  </body>
+</html>

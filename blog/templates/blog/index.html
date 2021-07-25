@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    {% if topic_list %}
+      {% for topic in topic_list %}
+        <ul>
+          <li> <a href="{% url 'blog:detail' topic.id %}">{{ topic.topic_title }}</a> </li>
+        </ul>
+      {% endfor %}
+    {% else %}
+      <h2>There are no available topics.</h2>
+    {% endif %}
+  </body>
+</html>
