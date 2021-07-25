@@ -26,5 +26,7 @@ class DetailView(generic.DetailView):
 
 def comment(request, topic_id):
     topic = get_object_or_404(Topic, pk=topic_id)
-    topic.comment_set.create(comment_user = request.POST["user"], comment_body=request.POST["body"])
+    topic.comment_set.create(
+        comment_user=request.POST["user"], comment_body=request.POST["body"]
+    )
     return HttpResponseRedirect(reverse("blog:detail", args=(topic_id,)))

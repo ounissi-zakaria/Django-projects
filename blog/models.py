@@ -5,8 +5,10 @@ class Topic(models.Model):
     topic_title = models.CharField(max_length=200)
     topic_body = models.TextField()
     topic_date = models.DateTimeField("date published")
+
     def __str__(self):
         return self.topic_title
+
     def number_of_comments(self):
         return len(self.comment_set.all())
 

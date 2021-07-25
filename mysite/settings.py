@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+
 try:
     from .secrets import *
 except Exception as e:
@@ -34,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "main.apps.MainConfig",
     "blog.apps.BlogConfig",
     "django.contrib.admin",
     "django.contrib.auth",
