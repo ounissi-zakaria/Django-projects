@@ -65,8 +65,12 @@ class TopicIndexViewTests(TestCase):
         """
         Display multiple topics
         """
-        topic1 = create_topic(title="Hello", body="I was wondering if after all ", days = -1)
-        topic2 = create_topic(title="Its me", body="these years youd like to meet", days = -2)
+        topic1 = create_topic(
+            title="Hello", body="I was wondering if after all ", days=-1
+        )
+        topic2 = create_topic(
+            title="Its me", body="these years youd like to meet", days=-2
+        )
         response = self.client.get(reverse("blog:index"))
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["topic_list"], [topic1, topic2])
@@ -97,27 +101,38 @@ class TopicDetailViewTest(TestCase):
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 404)
 
+
 class CommentViewTest(TestCase):
     def test_topic_with_one_comment(self):
         """
         Topics with one comment show one comment.
         """
-        topic = create_topic("lorem","lorem ipsum")
-        self.client.post(reverse("blog:comment", args=(topic.id,)), data = {"user":"User1","body":"Body1 Body1"})
+        topic = create_topic("lorem", "lorem ipsum")
+        self.client.post(
+            reverse("blog:comment", args=(topic.id,)),
+            data={"user": "User1", "body": "Body1 Body1"},
+        )
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,"User1")
-        self.assertContains(response,"Body1 Body1")
+        self.assertContains(response, "User1")
+        self.assertContains(response, "Body1 Body1")
+
     def test_topic_with_multiple_comment(self):
         """
         Topics with multiple comments show multiple comments.
         """
-        topic = create_topic("lorem","lorem ipsum")
-        self.client.post(reverse("blog:comment", args=(topic.id,)), data = {"user":"User1","body":"Body1 Body1"})
-        self.client.post(reverse("blog:comment", args=(topic.id,)), data = {"user":"User2","body":"Body2 Body2"})
+        topic = create_topic("lorem", "lorem ipsum")
+        self.client.post(
+            reverse("blog:comment", args=(topic.id,)),
+            data={"user": "User1", "body": "Body1 Body1"},
+        )
+        self.client.post(
+            reverse("blog:comment", args=(topic.id,)),
+            data={"user": "User2", "body": "Body2 Body2"},
+        )
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,"User1")
-        self.assertContains(response,"Body1 Body1")
-        self.assertContains(response,"User2")
-        self.assertContains(response,"Body2 Body2")
+        self.assertContains(response, "User1")
+        self.assertContains(response, "Body1 Body1")
+        self.assertContains(response, "User2")
+        self.assertContains(response, "Body2 Body2")
