@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "pastebin.apps.PastebinConfig",
     "main.apps.MainConfig",
     "blog.apps.BlogConfig",
     "django.contrib.admin",
