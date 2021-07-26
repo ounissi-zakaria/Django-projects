@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.views import generic
 from django.utils import timezone
 from django.urls import reverse
+from django.db import IntegrityError
 
 from .models import Text
 from .forms import TextForm
@@ -16,8 +17,10 @@ def index(request):
                 text_body=form.cleaned_data["body"],
             )
             text.text_url = text.generate_url()
-            if not Text.objects.filter(text_url__exact=text.text_url ).exists():
+            try:
                 text.save()
+            except IntegrityError:
+                pass
             return HttpResponseRedirect(
                 reverse("pastebin:detail", args=(text.text_url,))
             )

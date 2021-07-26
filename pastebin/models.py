@@ -5,7 +5,7 @@ import string
 
 class Text(models.Model):
     text_body = models.TextField()
-    text_url = models.SlugField(max_length=10)
+    text_url = models.SlugField(max_length=10, unique=True)
     text_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

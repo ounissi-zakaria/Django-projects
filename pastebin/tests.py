@@ -1,8 +1,8 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 
-class TextIndexViewTest(TestCase):
+class TextIndexViewTest(TransactionTestCase):
     def test_new_form(self):
         """
         Creating new valid form redirects to it's detail with the stored text.
