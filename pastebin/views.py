@@ -12,11 +12,12 @@ def index(request):
     if request.method == "POST":
         form = TextForm(request.POST)
         if form.is_valid():
-            text = Text.objects.create(
+            text = Text(
                 text_body=form.cleaned_data["body"],
             )
             text.text_url = text.generate_url()
-            text.save()
+            if not Text.objects.filter(text_url__exact=text.text_url ).exists():
+                text.save()
             return HttpResponseRedirect(
                 reverse("pastebin:detail", args=(text.text_url,))
             )
