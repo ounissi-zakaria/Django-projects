@@ -9,16 +9,9 @@
     <p>{{topic.topic_body}}</p>
     <hr>
     <h2>Add a comment:</h2>
-    <form action="{% url 'blog:comment' topic.id %}" method="post">
+    <form action="{% url 'blog:detail' topic.id %}" method="post">
         {% csrf_token %}
-        <label>Username:
-          <input type="text" name="user" maxlength="200" size="80">
-        </label>
-        <br>
-        <label>Comment:
-          <textarea name="body" rows="5" cols="82" ></textarea>
-        </label>
-        <br>
+        {{form}}
         <input type="submit" value="Submit comment  ">
     </form>
     <hr>

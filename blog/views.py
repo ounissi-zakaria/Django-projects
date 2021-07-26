@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 
 from .models import Topic, Comment
+from .forms import CommentForm
 
 
 class IndexView(generic.ListView):
@@ -16,17 +17,16 @@ class IndexView(generic.ListView):
         )
 
 
-class DetailView(generic.DetailView):
-    model = Topic
-    template_name = "blog/detail.html"
-
-    def get_queryset(self):
-        return Topic.objects.filter(topic_date__lte=timezone.now())
-
-
-def comment(request, topic_id):
-    topic = get_object_or_404(Topic, pk=topic_id)
-    topic.comment_set.create(
-        comment_user=request.POST["user"], comment_body=request.POST["body"]
-    )
-    return HttpResponseRedirect(reverse("blog:detail", args=(topic_id,)))
+def detail(request, topic_id):
+    topic = get_object_or_404(Topic, pk=topic_id, topic_date__lte=timezone.now())
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            topic.comment_set.create(
+                comment_user=form.cleaned_data["user"],
+                comment_body=form.cleaned_data["body"],
+            )
+            return HttpResponseRedirect(reverse("blog:detail", args=(topic_id,)))
+    form = CommentForm()
+    context = {"topic": topic, "form": form}
+    return render(request, "blog/detail.html", context)

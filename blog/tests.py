@@ -109,7 +109,7 @@ class CommentViewTest(TestCase):
         """
         topic = create_topic("lorem", "lorem ipsum")
         self.client.post(
-            reverse("blog:comment", args=(topic.id,)),
+            reverse("blog:detail", args=(topic.id,)),
             data={"user": "User1", "body": "Body1 Body1"},
         )
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
@@ -123,11 +123,11 @@ class CommentViewTest(TestCase):
         """
         topic = create_topic("lorem", "lorem ipsum")
         self.client.post(
-            reverse("blog:comment", args=(topic.id,)),
+            reverse("blog:detail", args=(topic.id,)),
             data={"user": "User1", "body": "Body1 Body1"},
         )
         self.client.post(
-            reverse("blog:comment", args=(topic.id,)),
+            reverse("blog:detail", args=(topic.id,)),
             data={"user": "User2", "body": "Body2 Body2"},
         )
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
@@ -136,3 +136,29 @@ class CommentViewTest(TestCase):
         self.assertContains(response, "Body1 Body1")
         self.assertContains(response, "User2")
         self.assertContains(response, "Body2 Body2")
+
+    def test_comment_with_no_name(self):
+        """
+        Comments with no username are not registered.
+        """
+        topic = create_topic("lorem", "lorem ipsum")
+        self.client.post(
+            reverse("blog:detail", args=(topic.id,)),
+            data={"user": "", "body": "Body1 Body1"},
+        )
+        response = self.client.get(reverse("blog:detail", args=(topic.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context["topic"].comment_set.all(), [])
+
+    def test_comment_with_no_body(self):
+        """
+        Comments with no body are not registered.
+        """
+        topic = create_topic("lorem", "lorem ipsum")
+        self.client.post(
+            reverse("blog:detail", args=(topic.id,)),
+            data={"user": "132", "body": ""},
+        )
+        response = self.client.get(reverse("blog:detail", args=(topic.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context["topic"].comment_set.all(), [])
