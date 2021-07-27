@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "todo.apps.TodoConfig",
     "pastebin.apps.PastebinConfig",
     "main.apps.MainConfig",
     "blog.apps.BlogConfig",
