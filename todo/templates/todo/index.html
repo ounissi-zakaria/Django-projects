@@ -9,7 +9,15 @@
       <h1>Todo list:</h1>
       <ul>
         {% for task in task_list %}
-          <li> {{task}} </li>
+          <li>
+            <span>
+              {{task}}
+            </span>
+            <form action="{% url 'todo:delete' task.id %}" method="post">
+              {% csrf_token %}
+              <input type="submit" value="🆇">
+            </form>
+          </li>
         {% endfor %}
       </ul>
     {% else %}
