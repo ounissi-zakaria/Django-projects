@@ -4,6 +4,6 @@ from . import views
 app_name = "todo"
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("<int:pk>/delete", views.delete, name="delete"),
+    path("", views.IndexView.as_view(), name="index"),
+    path("<int:pk>/delete", views.TaskDeleteView.as_view(), name="delete"),
 ]

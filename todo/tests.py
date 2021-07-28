@@ -30,7 +30,7 @@ class IndexViewTest(TestCase):
         """
         task_body = ""
         response = self.client.post("/todo/", data={"body": task_body})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 400)
         response = self.client.get("/todo/")
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["task_list"], [])
