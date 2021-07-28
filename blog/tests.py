@@ -142,10 +142,11 @@ class CommentViewTest(TestCase):
         Comments with no username are not registered.
         """
         topic = create_topic("lorem", "lorem ipsum")
-        self.client.post(
+        response = self.client.post(
             reverse("blog:detail", args=(topic.id,)),
             data={"user": "", "body": "Body1 Body1"},
         )
+        self.assertEqual(response.status_code, 400)
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["topic"].comment_set.all(), [])
@@ -155,10 +156,11 @@ class CommentViewTest(TestCase):
         Comments with no body are not registered.
         """
         topic = create_topic("lorem", "lorem ipsum")
-        self.client.post(
+        response = self.client.post(
             reverse("blog:detail", args=(topic.id,)),
             data={"user": "132", "body": ""},
         )
+        self.assertEqual(response.status_code, 400)
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["topic"].comment_set.all(), [])
