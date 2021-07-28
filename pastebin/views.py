@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
-from django.views import generic
+from django.http import HttpResponseRedirect, HttpResponse
+from django.views import generic, View
 from django.utils import timezone
 from django.urls import reverse
 from django.db import IntegrityError
@@ -9,8 +9,18 @@ from .models import Text
 from .forms import TextForm
 
 
-def index(request):
-    if request.method == "POST":
+# def index(request):
+#     if request.method == "POST":
+#
+
+
+class IndexView(View):
+    def get(self, request):
+        form = TextForm()
+        context = {"form": form}
+        return render(request, "pastebin/index.html", context)
+
+    def post(self, request):
         form = TextForm(request.POST)
         if form.is_valid():
             text = Text(
@@ -24,12 +34,12 @@ def index(request):
             return HttpResponseRedirect(
                 reverse("pastebin:detail", args=(text.text_url,))
             )
-    form = TextForm()
-    context = {"form": form}
-    return render(request, "pastebin/index.html", context)
+        return HttpResponse(status=400)
 
 
-def detail(request, url):
-    text = Text.objects.get(text_url__exact=url)
-    context = {"text": text}
-    return render(request, "pastebin/detail.html", context)
+class DetailView(generic.DetailView):
+    model = Text
+    template_name = "pastebin/detail.html"
+
+    def get_object(self):
+        return Text.objects.get(text_url__exact=self.kwargs["url"])

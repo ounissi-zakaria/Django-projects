@@ -35,3 +35,14 @@ class TextIndexViewTest(TransactionTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, text_body)
+
+    def test_invalid_form(self):
+        """
+        Empty forms return are not registerd and 400 status code .
+        """
+        text_body = ""
+        response = self.client.post(
+            "/pastebin/",
+            data={"body": text_body},
+        )
+        self.assertEqual(response.status_code, 400)

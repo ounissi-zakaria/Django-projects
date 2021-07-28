@@ -33,4 +33,4 @@ class DetailView(View):
                 comment_body=form.cleaned_data["body"],
             )
             return HttpResponseRedirect(reverse("blog:detail", args=(topic_id,)))
-        return HttpResponse(status = 400)
+        return HttpResponse(status=400)

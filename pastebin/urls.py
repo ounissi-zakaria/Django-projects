@@ -4,6 +4,6 @@ from . import views
 app_name = "pastebin"
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("<str:url>/", views.detail, name="detail"),
+    path("", views.IndexView.as_view(), name="index"),
+    path("<str:url>/", views.DetailView.as_view(), name="detail"),
 ]
