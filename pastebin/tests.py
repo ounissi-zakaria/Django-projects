@@ -40,6 +40,14 @@ class TextIndexViewTests(TransactionTestCase):
 
 
 class TextFormTests(TestCase):
+    def test_valid_form(self):
+        """
+        forms with valid text are valid.
+        """
+        text_body = "Text  Text"
+        form = TextForm({"body": text_body})
+        self.assertTrue(form.is_valid())
+
     def test_invalid_form(self):
         """
         Empty forms are not valid

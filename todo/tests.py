@@ -2,9 +2,10 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Task
+from .forms import TaskForm
 
 
-class IndexViewTest(TestCase):
+class IndexViewTests(TestCase):
     def test_no_task(self):
         """
         if there are no tasks show the appropriate message.
@@ -36,7 +37,7 @@ class IndexViewTest(TestCase):
         self.assertQuerysetEqual(response.context["task_list"], [])
 
 
-class DeleteViewTest(TestCase):
+class DeleteViewTests(TestCase):
     def test_delete_element(self):
         """
         Deleted elements are removed from the DateBase and are no longer displayed.
@@ -60,3 +61,21 @@ class DeleteViewTest(TestCase):
         self.client.post(reverse("todo:delete", args=(task_id,)))
         response = self.client.post(reverse("todo:delete", args=(task_id,)))
         self.assertEqual(response.status_code, 404)
+
+
+class TaskFormTests(TestCase):
+    def test_valid_form(self):
+        """
+        Forms with valid text are valid
+        """
+        task_body = "Task Text Text"
+        form = TaskForm({"body": task_body})
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_form(self):
+        """
+        forms with no text are not valid.
+        """
+        task_body = ""
+        form = TaskForm({"body": task_body})
+        self.assertFalse(form.is_valid())
