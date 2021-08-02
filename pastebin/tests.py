@@ -1,11 +1,13 @@
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
+from .forms import TextForm
 
-class TextIndexViewTest(TransactionTestCase):
-    def test_new_form(self):
+
+class TextIndexViewTests(TransactionTestCase):
+    def test_new_text(self):
         """
-        Creating new valid form redirects to it's detail with the stored text.
+        Creating new valid text redirects to it's detail with the stored body.
         """
         text_body = "Text Test"
         response = self.client.post(
@@ -36,13 +38,12 @@ class TextIndexViewTest(TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, text_body)
 
+
+class TextFormTests(TestCase):
     def test_invalid_form(self):
         """
-        Empty forms return are not registerd and 400 status code .
+        Empty forms are not valid
         """
         text_body = ""
-        response = self.client.post(
-            "/pastebin/",
-            data={"body": text_body},
-        )
-        self.assertEqual(response.status_code, 400)
+        form = TextForm({"body": text_body})
+        self.assertFalse(form.is_valid())
