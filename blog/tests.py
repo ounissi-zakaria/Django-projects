@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.urls import reverse
 
 from .models import Topic, Comment
+from .forms import CommentForm
 import datetime
 
 
@@ -11,7 +12,7 @@ def create_topic(title, body, days=0):
     return Topic.objects.create(topic_title=title, topic_body=body, topic_date=time)
 
 
-class TopicIndexViewTests(TestCase):
+class IndexViewTests(TestCase):
     def test_no_topics(self):
         """
         Show appropriate message if there are no topics.
@@ -78,7 +79,7 @@ class TopicIndexViewTests(TestCase):
         self.assertContains(response, topic2.topic_title)
 
 
-class TopicDetailViewTest(TestCase):
+class DetailViewTest(TestCase):
     def test_past_topic(self):
         """
         Topics with topic_date in the past are displayed.
@@ -101,17 +102,12 @@ class TopicDetailViewTest(TestCase):
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 404)
 
-
-class CommentViewTest(TestCase):
     def test_topic_with_one_comment(self):
         """
         Topics with one comment show one comment.
         """
         topic = create_topic("lorem", "lorem ipsum")
-        self.client.post(
-            reverse("blog:detail", args=(topic.id,)),
-            data={"user": "User1", "body": "Body1 Body1"},
-        )
+        topic.comment_set.create(comment_user="User1", comment_body="Body1 Body1")
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "User1")
@@ -122,14 +118,8 @@ class CommentViewTest(TestCase):
         Topics with multiple comments show multiple comments.
         """
         topic = create_topic("lorem", "lorem ipsum")
-        self.client.post(
-            reverse("blog:detail", args=(topic.id,)),
-            data={"user": "User1", "body": "Body1 Body1"},
-        )
-        self.client.post(
-            reverse("blog:detail", args=(topic.id,)),
-            data={"user": "User2", "body": "Body2 Body2"},
-        )
+        topic.comment_set.create(comment_user="User1", comment_body="Body1 Body1")
+        topic.comment_set.create(comment_user="User2", comment_body="Body2 Body2")
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "User1")
@@ -137,7 +127,22 @@ class CommentViewTest(TestCase):
         self.assertContains(response, "User2")
         self.assertContains(response, "Body2 Body2")
 
-    def test_comment_with_no_name(self):
+    def test_post_comment(self):
+        """
+        Valid comments are registerd and displayed.
+        """
+        topic = create_topic("lorem", "lorem ipsum")
+        response = self.client.post(
+            reverse("blog:detail", args=(topic.id,)),
+            data={"user": "User1", "body": "Body1 Body1"},
+        )
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(reverse("blog:detail", args=(topic.id,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "User1")
+        self.assertContains(response, "Body1 Body1")
+
+    def test_post_comment_with_no_name(self):
         """
         Comments with no username are not registered.
         """
@@ -151,7 +156,7 @@ class CommentViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["topic"].comment_set.all(), [])
 
-    def test_comment_with_no_body(self):
+    def test_post_comment_with_no_body(self):
         """
         Comments with no body are not registered.
         """
@@ -164,3 +169,31 @@ class CommentViewTest(TestCase):
         response = self.client.get(reverse("blog:detail", args=(topic.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["topic"].comment_set.all(), [])
+
+
+class FormTest(TestCase):
+    def test_comment_form(self):
+        """
+        Forms with valid data are valid.
+        """
+        topic = create_topic("lorem", "ipsum")
+        form = CommentForm({"user": "user", "body": "body"})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["user"], "user")
+        self.assertEqual(form.cleaned_data["body"], "body")
+
+    def test_comment_form_without_body(self):
+        """
+        Forms without a body are not valid.
+        """
+        topic = create_topic("lorem", "ipsum")
+        form = CommentForm({"user": "user", "body": ""})
+        self.assertFalse(form.is_valid())
+
+    def test_comment_form_without_user(self):
+        """
+        Forms without a user are not valid.
+        """
+        topic = create_topic("lorem", "ipsum")
+        form = CommentForm({"user": "", "body": "body"})
+        self.assertFalse(form.is_valid())
