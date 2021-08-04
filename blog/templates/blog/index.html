@@ -1,18 +1,98 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
     <title></title>
   </head>
   <body>
-    {% if topic_list %}
-      {% for topic in topic_list %}
-        <ul>
-          <li> <a href="{% url 'blog:detail' topic.id %}">{{ topic.topic_title }}</a> </li>
-        </ul>
-      {% endfor %}
-    {% else %}
-      <h2>There are no available topics.</h2>
-    {% endif %}
+
   </body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'blog/style_grid.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cardo:wght@700&family=Montserrat:ital,wght@0,500;1,300;1,700&display=swap" rel="stylesheet">
+    <title>Le Blog</title>
+  </head>
+
+  <body>
+    <div class="grid">
+      <header class="header">
+        <div class="top-barre">
+          <nav class="menu">
+            <a href="{% url 'main:index' %}" class="barre-link">Acceuil</a>
+            <a href="#" class="barre-link-active">Article</a>
+            <a href="#" class="barre-link">Apropos</a>
+            <a href="#" class="barre-link">Contact</a>
+          </nav>
+          <nav class="social_media">
+            <a href=""><img src="{% static 'blog/img/Shape.png' %}" alt="facebook_button" class="social"></a>
+            <a href=""><img src="{% static 'blog/img/twitter.png' %}" alt="twitter_button" class="social"></a>
+          </nav>
+        </div>
+      </header>
+      <div class="banner"></div>
+      <main class="main">
+        <article class="contenu">
+
+          {% if topic_list %}
+          {% for topic in topic_list %}
+            <div class="objet">
+              <img src="{% static 'blog/img/img.png' %}" alt="image quelquonc" class="image">
+              <div class="paf">
+                <p class="date">{{ topic.topic_date }}</p>
+                <a href="{% url 'blog:detail' topic.id %}" class="lien">
+                  <h1 class="titre">{{ topic.topic_title }}</h1>
+                </a>
+                <p class="paragraph"> {{ topic.topic_body|truncatewords:50 }}...</p>
+              </div>
+            </div>
+          {% endfor %}
+          {% else %}
+          <h2>There are no available topics.</h2>
+          {% endif %}
+
+        </article>
+        <aside class="side-barre">
+          <nav class="categories">
+            <h1>Catégories</h1>
+            <ul class="alpha">
+              <li><a href="High-Tech.html" class="tag">High-Tech</a></li>
+              <li><a href="Concentre-du-Web" class="tag">Concentré du Web</a></li>
+              <li><a href="about.html" class="tag">À propos</a></li>
+              <li><a href="Astuces-pour-développeurs" class="tag">Astuces pour développeurs</a></li>
+              <li><a href="Ressources.html" class="tag">Ressources</a></li>
+              <li><a href="Bonnes-pratiques.html" class="tag">Bonnes pratiques</a></li>
+            </ul>
+
+          </nav>
+          <hr>
+          <nav class="categories">
+            <h1>Catégories</h1>
+            <ul class="alpha">
+              <li><a href="High-Tech.html" class="tag">High-Tech</a></li>
+              <li><a href="Concentre-du-Web" class="tag">Concentré du Web</a></li>
+              <li><a href="about.html" class="tag">À propos</a></li>
+              <li><a href="Astuces-pour-développeurs" class="tag">Astuces pour développeurs</a></li>
+              <li><a href="Ressources.html" class="tag">Ressources</a></li>
+              <li><a href="Bonnes-pratiques.html" class="tag">Bonnes pratiques</a></li>
+            </ul>
+
+          </nav>
+
+
+        </aside>
+      </main>
+    </div>
+
+  </body>
+
 </html>
