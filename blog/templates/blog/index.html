@@ -38,13 +38,15 @@ https://github.com/Chaweki/ -->
           {% if topic_list %}
           {% for topic in topic_list %}
             <div class="objet">
-              <img src="{% static 'blog/img/img.png' %}" alt="image quelquonc" class="image">
+              <a href="{% url 'blog:detail' topic.id %}">
+                <img src="{% static 'blog/img/img.png' %}" alt="image quelquonc" class="image">
+              </a>
               <div class="paf">
                 <p class="date">{{ topic.topic_date }}</p>
                 <a href="{% url 'blog:detail' topic.id %}" class="lien">
                   <h1 class="titre">{{ topic.topic_title }}</h1>
                 </a>
-                <p class="paragraph"> {{ topic.topic_body|truncatewords:50 }}...</p>
+                <p class="paragraph"> {{ topic.topic_body|truncatewords:50 }}</p>
               </div>
             </div>
           {% endfor %}
